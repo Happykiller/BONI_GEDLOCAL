@@ -15,28 +15,30 @@ public class LibConnectorGEDLocal {
 
     private static final Logger uilLogger = Logger.getLogger("com.bonitasoft.groovy");
 
-    public static String sayHelloMessage(){
-        String retour = "HelloWorld";
+    public static void trace(String message){
         try {
-            uilLogger.fine("sayHelloMessage - msg : HelloWorld.");
-            return retour;
+            uilLogger.info(message);
+            System.out.println(message);
         }catch (Exception e) {
-            uilLogger.fine("sayHelloMessage - Error : {}"+ e.getMessage());
-            return null;
+            uilLogger.severe("trace - Error : " + e.getMessage());
         }
     }
 
     public static boolean putFile(Long id, String path, String fileName, InputStream file){
         Boolean retour = false;
         try {
-            String strId = id.toString();
-
-            File fileOutPut = new File(path+strId+"_"+fileName);
+            File fileOutPut = null;
+            if(id != null) {
+                String strId = id.toString();
+                fileOutPut = new File(path + strId + "_" + fileName);
+            }else{
+                fileOutPut = new File(path + fileName);
+            }
             OutputStream output = new FileOutputStream(fileOutPut);
             try {
                 IOUtils.copy(file, output);
             } catch (IOException e) {
-                uilLogger.fine("putFile - Error : {}"+ e.getMessage());
+                trace("putFile - IOException : " + e.getMessage());
             } finally {
                 file.close();
                 output.close();
@@ -44,36 +46,41 @@ public class LibConnectorGEDLocal {
             retour = true;
             return retour;
         }catch (Exception e) {
-            uilLogger.fine("putFile - Error : {}"+ e.getMessage());
+            trace("putFile - Exception : " + e.getMessage());
             return false;
         }
     }
 
-    public static RetourGet getFile(Long id, String path){
+    public static RetourGet getFile(Long id, String path, String fileName){
         RetourGet myRetourGet = new RetourGet();
         try {
-            String strId = id.toString();
             try {
                 String curName = null;
                 File dir = new File(path);
-                String fileName = "";
-                for (File curFile : dir.listFiles()) {
-                    if (curFile.getName().startsWith(strId)) {
-                        curName = curFile.getName();
-                        myRetourGet.nameFile = curName.replace(strId +"_","");
-                        break;
+                if((fileName != null) && (!fileName.equals("")) && (id == null)){
+                    curName = fileName;
+                    myRetourGet.nameFile = fileName;
+                }else {
+                    String strId = id.toString();
+                    for (File curFile : dir.listFiles()) {
+                        if (curFile.getName().startsWith(strId)) {
+                            curName = curFile.getName();
+                            myRetourGet.nameFile = curName.replace(strId + "_", "");
+                            break;
+                        }
                     }
                 }
-                myRetourGet.theStream = new FileInputStream(path+curName);
+
+                myRetourGet.theStream = new FileInputStream(path + curName);
                 Path thePath = Paths.get(path + curName);
                 myRetourGet.mineType = Files.probeContentType(thePath);
             } catch (IOException e) {
-                uilLogger.fine("getFile - Error : {}"+ e.getMessage());
+                trace("getFile - IOException : " + e.getMessage());
             }
             myRetourGet.statut = true;
             return myRetourGet;
         }catch (Exception e) {
-            uilLogger.fine("getFile - Error : {}"+ e.getMessage());
+            trace("getFile - Exception : " + e.getMessage());
             return null;
         }
     }

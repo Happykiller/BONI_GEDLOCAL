@@ -1,16 +1,16 @@
 /**
- * 
+ *
  */
 package com.gedloca.put;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
 import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.connector.ConnectorException;
+import org.slf4j.LoggerFactory;
 
 import com.bonitasoft.connectorGEDLocal.LibConnectorGEDLocal;
 
@@ -25,55 +25,58 @@ import com.bonitasoft.connectorGEDLocal.LibConnectorGEDLocal;
  */
 public class PutOnGedLocalImpl extends AbstractPutOnGedLocalImpl {
 
-	@Override
-	protected void executeBusinessLogic() throws ConnectorException{
-		//Get access to the connector input parameters
-		//getId();
-		//getPath();
-		//getFile();
-	
-		//var
-		Boolean trace = true;
-		
-		//Init logger
-		Logger logger = Logger.getLogger("org.bonitasoft");
-		logger.info(this.getClass().getName() + " - execute method executeBusinessLogic.");
-		
-		Boolean boolReturn = false;
-		
-		//Init processAPI
-		ProcessAPI myProcessAPI = apiAccessor.getProcessAPI();
-		
-		if(trace){
-			logger.info("getId : " + getId().toString());
-			logger.info("getPath : " + getPath());
-			logger.info("getFileName : " + getFile().getName());
-		}
-		
-		Document myDocument = getFile();
-		
-		byte[] docContent;
-		try {
-			docContent = myProcessAPI.getDocumentContent(myDocument.getContentStorageId());
-	    	InputStream is = new ByteArrayInputStream(docContent);
-			boolReturn = LibConnectorGEDLocal.upFile(getId(), getPath(), getFile().getName(), is);
-		} catch (DocumentNotFoundException e) {
-			logger.severe(this.getClass().getName() + " - Error DocumentNotFoundException : " + e.getMessage());
-		}
-	
-		setRetour(boolReturn);
-	 }
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PutOnGedLocalImpl.class);
 
-	@Override
-	public void connect() throws ConnectorException{
-		//[Optional] Open a connection to remote server
-	
-	}
+    @Override
+    protected void executeBusinessLogic() throws ConnectorException{
+        //Get access to the connector input parameters
+        //getId();
+        //getPath();
+        //getFile();
 
-	@Override
-	public void disconnect() throws ConnectorException{
-		//[Optional] Close connection to remote server
-	
-	}
+        //var
+        Boolean trace = true;
+        String headerLog = "[Log : "+this.getClass().getName()+"]";
+
+        //Init logger
+        LOGGER.info(headerLog + "Execute method executeBusinessLogic.");
+
+        Boolean boolReturn = false;
+
+        //Init processAPI
+        ProcessAPI myProcessAPI = apiAccessor.getProcessAPI();
+
+        if(trace){
+            LOGGER.info("{}getId : {}", headerLog, getId());
+            LOGGER.info(headerLog + "getPath : " + getPath());
+            LOGGER.info(headerLog + "getFileName : " + getFile().getContentFileName());
+        }
+
+        Document myDocument = getFile();
+
+        byte[] docContent;
+        try {
+            docContent = myProcessAPI.getDocumentContent(myDocument.getContentStorageId());
+            InputStream is = new ByteArrayInputStream(docContent);
+            boolReturn = LibConnectorGEDLocal.putFile(getId(), getPath(), getFile().getContentFileName(), is);
+        } catch (DocumentNotFoundException e) {
+            LOGGER.error(headerLog + "Error DocumentNotFoundException : " + e.getMessage());
+        }
+
+        LOGGER.info(headerLog + "Finish with boolReturn : "+boolReturn.toString());
+        setRetour(boolReturn);
+    }
+
+    @Override
+    public void connect() throws ConnectorException{
+        //[Optional] Open a connection to remote server
+
+    }
+
+    @Override
+    public void disconnect() throws ConnectorException{
+        //[Optional] Close connection to remote server
+
+    }
 
 }
