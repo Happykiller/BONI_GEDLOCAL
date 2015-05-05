@@ -1,6 +1,7 @@
 package com.bonitasoft.connectorGEDLocal;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,8 +73,12 @@ public class LibConnectorGEDLocal {
                 }
 
                 myRetourGet.theStream = new FileInputStream(path + curName);
-                Path thePath = Paths.get(path + curName);
-                myRetourGet.mineType = Files.probeContentType(thePath);
+
+                Tika tika = new Tika();
+                File file = new File(path + curName);
+                String mimeType = tika.detect(file);
+                myRetourGet.mineType = mimeType;
+
             } catch (IOException e) {
                 trace("getFile - IOException : " + e.getMessage());
             }
