@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
+  <id>PutOnGedLocal</id>
+  <version>1.1</version>
+  <category icon="CMS.png" id="cms"/>
+  <input defaultValue="" mandatory="false" name="id" type="java.lang.Long"/>
+  <input mandatory="true" name="path" type="java.lang.String"/>
+  <input mandatory="true" name="file" type="org.bonitasoft.engine.bpm.document.Document"/>
+  <output name="retour" type="java.lang.Boolean"/>
+  <page id="DefineInput">
+    <widget xsi:type="definition:Text" id="Id" inputName="id"/>
+    <widget xsi:type="definition:Text" id="Path" inputName="path"/>
+    <widget xsi:type="definition:Text" id="File" inputName="file" showDocuments="true"/>
+  </page>
+  <jarDependency>connectorGEDLocal-1.0-SNAPSHOT.jar</jarDependency>
+  <jarDependency>tika-core-1.8.jar</jarDependency>
+</definition:ConnectorDefinition>

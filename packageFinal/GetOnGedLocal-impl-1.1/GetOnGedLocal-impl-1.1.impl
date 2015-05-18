@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+  <implementationId>GetOnGedLocal-impl</implementationId>
+  <implementationVersion>1.1</implementationVersion>
+  <definitionId>GetOnGedLocal</definitionId>
+  <definitionVersion>1.1</definitionVersion>
+  <implementationClassname>com.gedloca.get.GetOnGedLocalImpl</implementationClassname>
+  <hasSources>true</hasSources>
+  <description></description>
+  <jarDependencies>
+    <jarDependency>connectorGEDLocal-1.0-SNAPSHOT.jar</jarDependency>
+    <jarDependency>tika-core-1.8.jar</jarDependency>
+  </jarDependencies>
+</implementation:connectorImplementation>
